@@ -1,11 +1,16 @@
 function searchUsers() {
-    var searchInput = document.getElementById('searchInput').value.trim();
+    var inputElement = document.getElementById('searchInput');
+    var searchInput = inputElement.value.trim();
+
     if (searchInput === "") {
         alert("Please enter a user name to search.");
         return;
     }
 
-    fetch('/webassignment/search?userName=' + searchInput)
+    // Clear the input field after validation but before fetch operation
+    inputElement.value = '';
+
+    fetch('/webassignment/search?userName=' + encodeURIComponent(searchInput))
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -13,15 +18,23 @@ function searchUsers() {
             return response.json();
         })
         .then(data => {
-            displaySearchResult(data);
+            displayResult(data, 'searchResult');
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            // Optionally, you might want to handle error more explicitly here
+        });
 }
 
 function addUser() {
-    var newUserID = document.getElementById('newUserID').value.trim();
-    var newUserName = document.getElementById('newUserName').value.trim();
-    var newUserType = document.getElementById('newUserType').value.trim();
+    var userIDElement = document.getElementById('newUserID');
+    var userNameElement = document.getElementById('newUserName');
+    var userTypeElement = document.getElementById('newUserType');
+
+    var newUserID = userIDElement.value.trim();
+    var newUserName = userNameElement.value.trim();
+    var newUserType = userTypeElement.value.trim();
+
     if (newUserID === "") {
         alert("Please enter a new user ID to add.");
         return;
@@ -34,6 +47,10 @@ function addUser() {
         alert("Please enter a new user type to add.");
         return;
     }
+    // Clear the inputs after validation
+    userIDElement.value = '';
+    userNameElement.value = '';
+    userTypeElement.value = '';
 
     // Construct the URL with all variables
     var url = '/webassignment/add?userID=' + encodeURIComponent(newUserID) +
@@ -48,68 +65,40 @@ function addUser() {
             return response.json();
         })
         .then(data => {
-            displaySearchResult(data);
-        })
-        .catch(error => console.error('Error:', error));
-}
-
-function addUser() {
-    var newUserID = document.getElementById('newUserID').value.trim();
-    var newUserName = document.getElementById('newUserName').value.trim();
-    var newUserType = document.getElementById('newUserType').value.trim();
-    if (newUserID === "") {
-        alert("Please enter a new user ID to add.");
-        return;
-    }
-    else if (newUserName === "") {
-        alert("Please enter a new user name to add.");
-        return;
-    }
-    else if (newUserType === "") {
-        alert("Please enter a new user type to add.");
-        return;
-    }
-
-    // Construct the URL with all variables
-    var url = '/webassignment/add?userID=' + encodeURIComponent(newUserID) +
-              '&userName=' + encodeURIComponent(newUserName) +
-              '&userType=' + encodeURIComponent(newUserType);
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            displaySearchResult(data);
+            displayResult(data, 'addUserResult');
         })
         .catch(error => console.error('Error:', error));
 }
 
 function updateUser() {
-    var newuserType = document.getElementById('updateUserType').value.trim();
-    var newuserName = document.getElementById('updateUserName').value.trim();
-    var olduserID = document.getElementById('oldUserID').value.trim();
-    if (olduserID === "") {
+    var userIDElement = document.getElementById('oldUserID');
+    var userNameElement = document.getElementById('updateUserName');
+    var userTypeElement = document.getElementById('updateUserType');
+
+    var oldUserID = userIDElement.value.trim();
+    var newUserName = userNameElement.value.trim();
+    var newUserType = userTypeElement.value.trim();
+
+    if (oldUserID === "") {
         alert("Please enter current user ID to change.");
         return;
     }
-    else if (newuserName === "") {
+    else if (newUserName === "") {
         alert("Please enter a new user name to change.");
         return;
     }
-    else if (newuserType === "") {
+    else if (newUserType === "") {
         alert("Please enter a new user type to change.");
         return;
     }
+    // Clear the inputs after validation
+    userIDElement.value = '';
+    userNameElement.value = '';
+    userTypeElement.value = '';
 
-    // Construct the URL with all variables
-    var url = '/webassignment/change?oldUserID=' + olduserID +
-              '&newUserName=' + newuserName +
-              '&newUserType=' + newuserType;
-
+    var url = '/webassignment/change?oldUserID=' + encodeURIComponent(oldUserID) +
+            '&newUserName=' + encodeURIComponent(newUserName) +
+            '&newUserType=' + encodeURIComponent(newUserType);
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -118,19 +107,23 @@ function updateUser() {
             return response.json();
         })
         .then(data => {
-            displaySearchResult(data);
+            displayResult(data, 'updateUserResult');
         })
         .catch(error => console.error('Error:', error));
 }
 
 function deleteUser() {
-    var userID = document.getElementById('deleteUserID').value.trim();
-    if (searchInput === "") {
+    var userIDElement = document.getElementById('deleteUserID');
+    var userID = userIDElement.value.trim();
+
+    if (userID === "") {
         alert("Please enter a user ID to delete.");
         return;
     }
 
-    fetch('/webassignment/delete?userID=' + userID)
+    userIDElement.value = ''; // Clear the input after validation
+
+    fetch('/webassignment/delete?userID=' + encodeURIComponent(userID))
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -138,27 +131,47 @@ function deleteUser() {
             return response.json();
         })
         .then(data => {
-            displaySearchResult(data);
+            if (data.success) { // Assuming your API sends back a success status
+                displayDeletionResult(true, 'deleteUserResult');
+            } else {
+                displayDeletionResult(false, 'deleteUserResult');
+            }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            displayDeletionResult(false, 'deleteUserResult');
+        });
+}
+
+function displayDeletionResult(success, resultDivId) {
+    var resultDiv = document.getElementById(resultDivId);
+    resultDiv.innerHTML = ""; // Clear any previous messages
+
+    if (success) {
+        resultDiv.textContent = "Done"; // Display "Done" on successful deletion
+    } else {
+        resultDiv.textContent = "Deletion failed"; // Display an error message if deletion failed
+    }
 }
 
 
-function displaySearchResult(users) {
-    var searchResultDiv = document.getElementById('searchResult');
-    searchResultDiv.innerHTML = "";
+function displayResult(users, resultDivId) {
+    var resultDiv = document.getElementById(resultDivId);
+    resultDiv.innerHTML = "";
 
     if (users.length === 0) {
-        searchResultDiv.textContent = "No users found.";
+        resultDiv.textContent = "No users found.";
     } else {
         var userList = document.createElement('ul');
         users.forEach(user => {
             var listItem = document.createElement('li');
-            listItem.textContent = user.userName + ' - ' + user.userType; // Update property names according to the backend
+            listItem.textContent = user.userName + ' - ' + user.userType; // Ensure these property names match your data structure
             userList.appendChild(listItem);
         });
-        searchResultDiv.appendChild(userList);
+        resultDiv.appendChild(userList);
     }
 }
+
+
 
 

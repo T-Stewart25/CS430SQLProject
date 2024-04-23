@@ -4,9 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management System</title>
+    <style>
+        /* App Bar styles */
+        .app-bar {
+            background-color: #333; /* Dark background for the app bar */
+            color: white; /* White text color */
+            padding: 10px 20px; /* Padding inside the app bar */
+            text-align: center; /* Center-align the text */
+        }
+
+        /* Body styles */
+        body {
+            font-family: Arial, sans-serif; /* Sets the font for the page */
+            margin: 0; /* Removes default margin */
+            padding-top: 50px; /* Adds padding at the top to avoid overlap with the app bar */
+        }
+
+        /* Styling for inputs and buttons */
+        input[type="text"], button {
+            margin: 10px 0; /* Margin around inputs and buttons */
+            padding: 8px; /* Padding inside inputs and buttons */
+            width: calc(100% - 22px); /* Full width minus padding for inputs */
+        }
+        button {
+            cursor: pointer; /* Pointer cursor on hover over the button */
+            background-color: #007BFF; /* Blue background for buttons */
+            color: white; /* White text color for buttons */
+            border: none; /* No border for a cleaner look */
+        }
+        button:hover {
+            background-color: #0056b3; /* Darker blue when hovered */
+        }
+        h1, h2 {
+            margin-left: 20px; /* Adds margin to headings for better alignment */
+        }
+    </style>
 </head>
 <body>
-    <h1>User Management System</h1>
+    <!-- App bar -->
+    <div class="app-bar">
+        <h1>User Management System</h1>
+    </div>
+
     <div>
         <h2>Search for Users</h2>
         <input type="text" id="searchInput" placeholder="Enter user name">
