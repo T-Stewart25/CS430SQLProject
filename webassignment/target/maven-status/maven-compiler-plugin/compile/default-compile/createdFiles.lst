@@ -1,0 +1,5 @@
+com/example/servlets/ChangeUserServlet.class
+com/example/model/User.class
+com/example/servlets/DeleteUserServlet.class
+com/example/servlets/UserAddServlet.class
+com/example/servlets/UserSearchServlet.class
