@@ -29,17 +29,36 @@ function searchUsers() {
 
 function searchUserDevices() {
     var inputElement = document.getElementById('searchInput');
-    var searchInput = inputElement.value.trim();
+    var startDateElement = document.getElementById('startDate');
+    var endDateElement = document.getElementById('endDate');
 
+    var searchInput = inputElement.value.trim();
+    var startDate = startDateElement.value.trim();
+    var endDate = endDateElement.value.trim();
+
+    // Input Validation
     if (searchInput === "") {
         alert("Please enter a userId to search.");
+        return;
+    }
+    if (startDate === "") {
+        alert("Please enter the start date.");
+        return;
+    }
+    if (endDate === "") {
+        alert("Please enter the end date.");
         return;
     }
 
     // Clear the input field after validation but before fetch operation
     inputElement.value = '';
+    startDateElement.value = '';
+    endDateElement.value = '';
 
-    fetch('/webassignment/search?userId=' + encodeURIComponent(searchInput))
+    // Construct the fetch URL
+    var url = `/webassignment/search?userId=${encodeURIComponent(searchInput)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+
+    fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -47,12 +66,11 @@ function searchUserDevices() {
             return response.json();
         })
         .then(data => {
-            console.log("Received data:", data);; // Add this to see what the data structure looks like
-            displayResult(data, 'searchResult');
+            console.log("Received data:", data);
+            displayResult(data, 'searchDevicesResult');
         })
         .catch(error => {
             console.error('Error:', error);
-            // Optionally, you might want to handle error more explicitly here
         });
 }
 
