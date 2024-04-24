@@ -11,6 +11,7 @@
             color: white; /* White text color */
             padding: 10px 20px; /* Padding inside the app bar */
             text-align: center; /* Center-align the text */
+            position: relative; /* Enable positioning */
         }
 
         /* Body styles */
@@ -38,14 +39,26 @@
         h1, h2 {
             margin-left: 20px; /* Adds margin to headings for better alignment */
         }
+
+        /* Positioning for "Created by" text */
+        .created-by {
+            position: absolute;
+            top: 10px; /* Adjust top position as needed */
+            right: 20px; /* Adjust right position as needed */
+            color: #ccc; /* Light gray color for the text */
+            font-size: 12px; /* Adjust font size as needed */
+        }
     </style>
 </head>
 <body>
     <!-- App bar -->
     <div class="app-bar">
         <h1>User Management System</h1>
+        <!-- Created by text -->
+        <div class="created-by">Created by Thomas Stewart and Anthony Donsereaux</div>
     </div>
-
+</head>
+<body>
     <div>
         <h2>Search for Users</h2>
         <input type="text" id="searchInput" placeholder="Enter user name">

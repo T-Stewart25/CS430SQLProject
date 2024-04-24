@@ -132,9 +132,9 @@ function deleteUser() {
         })
         .then(data => {
             if (data.success) { // Assuming your API sends back a success status
-                displayDeletionResult(true, 'deleteUserResult');
-            } else {
                 displayDeletionResult(false, 'deleteUserResult');
+            } else {
+                displayDeletionResult(true, 'deleteUserResult');
             }
         })
         .catch(error => {
@@ -148,9 +148,9 @@ function displayDeletionResult(success, resultDivId) {
     resultDiv.innerHTML = ""; // Clear any previous messages
 
     if (success) {
-        resultDiv.textContent = "Done"; // Display "Done" on successful deletion
+        resultDiv.textContent = "Deletion sucessful!"; 
     } else {
-        resultDiv.textContent = "Deletion failed"; // Display an error message if deletion failed
+        resultDiv.textContent = "Deletion failed. User never existed or deletion process failed";
     }
 }
 
