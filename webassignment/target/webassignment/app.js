@@ -229,7 +229,7 @@ function displayResultUsage(uses, resultDivId) {
     resultDiv.innerHTML = "";
 
     if (uses.length === 0) {
-        resultDiv.textContent = "No usage found.";
+        resultDiv.textContent = "Usage already exists or Device ID and or User ID is not in Database";
     } else {
         var usesList = document.createElement('ul');
         uses.forEach(uses => {
