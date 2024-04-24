@@ -27,6 +27,35 @@ function searchUsers() {
         });
 }
 
+function searchUserDevices() {
+    var inputElement = document.getElementById('searchInput');
+    var searchInput = inputElement.value.trim();
+
+    if (searchInput === "") {
+        alert("Please enter a userId to search.");
+        return;
+    }
+
+    // Clear the input field after validation but before fetch operation
+    inputElement.value = '';
+
+    fetch('/webassignment/search?userId=' + encodeURIComponent(searchInput))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Received data:", data);; // Add this to see what the data structure looks like
+            displayResult(data, 'searchResult');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Optionally, you might want to handle error more explicitly here
+        });
+}
+
 function addUser() {
     var userIDElement = document.getElementById('newUserID');
     var userNameElement = document.getElementById('newUserName');

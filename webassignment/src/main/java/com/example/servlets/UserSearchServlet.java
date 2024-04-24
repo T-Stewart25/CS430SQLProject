@@ -29,43 +29,56 @@ public class UserSearchServlet extends HttpServlet {
     private static final String JDBC_PASSWORD = "835460928";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userName = request.getParameter("userName");
-        List<User> searchResult = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    String userName = request.getParameter("userName");
+    String userId = request.getParameter("userId");
+    List<User> searchResult = new ArrayList<>();
+    Connection connection = null;
+    PreparedStatement statement = null;
+    ResultSet resultSet = null;
 
-        try {
-            // Establish database connection
-        	 connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+    } catch (ClassNotFoundException e){
+        e.printStackTrace();
+    }
 
-            // Prepare SQL statement
-            String sql = "SELECT * FROM Users WHERE UserName LIKE ?";
+    try{
+
+        connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+
+        String sql = null;
+        // Determine which parameter is provided and prepare SQL statement accordingly
+        if (userId != null && !userId.isEmpty()) {
+            sql = "SELECT * FROM Users WHERE UserID = ?";
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, Integer.parseInt(userId));
+        } else if (userName != null && !userName.isEmpty()) {
+            sql = "SELECT * FROM Users WHERE UserName LIKE ?";
             statement = connection.prepareStatement(sql);
             statement.setString(1, "%" + userName + "%");
+        } else {
+            // If neither is provided, handle it (possibly throw an exception or return an error)
+            throw new IllegalArgumentException("No valid search parameter provided.");
+        }
 
-            // Execute query
-            resultSet = statement.executeQuery();
+        // Execute the query
+        resultSet = statement.executeQuery();
 
-            // Process result set
-            while (resultSet.next()) {
-                int userId = resultSet.getInt("UserID");
-                String name = resultSet.getString("UserName");
-                String userType = resultSet.getString("UserType");
-                System.out.println(" Student ID: "+ userId+"\n Student Name: " + name + "\n Dept Name: "
-                      + userType);
-                // Create User object and add to search result
-                User user = new User(userId, name, userType);
-                searchResult.add(user);
-            }
+        // Process the results
+        while (resultSet.next()) {
+            int retrievedUserId = resultSet.getInt("UserID");
+            String name = resultSet.getString("UserName");
+            String userType = resultSet.getString("UserType");
+            System.out.println("Student ID: "+ retrievedUserId + "\nStudent Name: " + name + "\nUser Type: " + userType);
+            User user = new User(retrievedUserId, name, userType);
+            searchResult.add(user);
+        }
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (NumberFormatException e) {
+            e.printStackTrace(); // Handle the case where userId is not a valid integer
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace(); // Handle the case where no valid parameter is provided
         } finally {
             // Close resources
             try { if (resultSet != null) resultSet.close(); } catch (SQLException e) { e.printStackTrace(); }

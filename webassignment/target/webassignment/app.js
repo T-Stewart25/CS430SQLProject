@@ -218,7 +218,7 @@ function displayResult(users, resultDivId) {
         var userList = document.createElement('ul');
         users.forEach(user => {
             var listItem = document.createElement('li');
-            listItem.textContent = user.userName + ' - ' + user.userType + ' - ' + user.userId; 
+            listItem.textContent = user.userName + ' - ' + user.userType + ' - ' + user.userId; // Ensure these property names match your data structure
             userList.appendChild(listItem);
         });
         resultDiv.appendChild(userList);
