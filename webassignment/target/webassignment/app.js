@@ -195,7 +195,7 @@ function addUses(){
             return response.json();
         })
         .then(data => {
-            displayResult(data, 'addUserResult');
+            displayResultUsage(data, 'updateUsageResult');
         })
         .catch(error => console.error('Error:', error));
 }
@@ -230,12 +230,12 @@ function displayResultUsage(uses, resultDivId) {
     resultDiv.innerHTML = "";
 
     if (uses.length === 0) {
-        resultDiv.textContent = "No usage found.";
+        resultDiv.textContent = "Usage already exists or Device ID and or User ID is not in Database";
     } else {
         var usesList = document.createElement('ul');
         uses.forEach(uses => {
             var listItem = document.createElement('li');
-            listItem.textContent = uses.userId + ' - ' + uses.deviceId + ' - ' + uses.usageDate + ' - ' + uses.usageDuration; 
+            listItem.textContent = 'ADDED USAGE: userID: ' + uses.userId + ' - deviceID: ' +  uses.deviceId + ' - usageDate: ' +  uses.usageDate + ' - usageDuration: ' +  uses.usageDuration; 
             usesList.appendChild(listItem);
         });
         resultDiv.appendChild(usesList);
