@@ -24,7 +24,7 @@ public class UserSearchServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // JDBC URL, username, and password
-	private static final String JDBC_URL = "jdbc:mysql://faure.cs.colostate.edu:3306/tste";
+    private static final String JDBC_URL = "jdbc:mysql://faure.cs.colostate.edu:3306/tste";
     private static final String JDBC_USERNAME = "tste";
     private static final String JDBC_PASSWORD = "835460928";
 
@@ -35,20 +35,24 @@ public class UserSearchServlet extends HttpServlet {
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-        try {
-            // Establish database connection
-        	 connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
 
             // Prepare SQL statement
-            String sql = "SELECT * FROM Users WHERE UserName LIKE ?";
+            String sql;
+            if (isNumeric(userName)) {
+                sql = "SELECT * FROM Users WHERE UserID = ?";
+            } else {
+                sql = "SELECT * FROM Users WHERE UserName LIKE ?";
+            }
             statement = connection.prepareStatement(sql);
-            statement.setString(1, "%" + userName + "%");
+
+            // Set parameter based on whether userName is numeric or not
+            if (isNumeric(userName)) {
+                statement.setInt(1, Integer.parseInt(userName));
+            } else {
+                statement.setString(1, "%" + userName + "%");
+            }
 
             // Execute query
             resultSet = statement.executeQuery();
@@ -59,12 +63,12 @@ public class UserSearchServlet extends HttpServlet {
                 String name = resultSet.getString("UserName");
                 String userType = resultSet.getString("UserType");
                 System.out.println(" Student ID: "+ userId+"\n Student Name: " + name + "\n Dept Name: "
-                      + userType);
+                        + userType);
                 // Create User object and add to search result
                 User user = new User(userId, name, userType);
                 searchResult.add(user);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             // Close resources
@@ -83,5 +87,17 @@ public class UserSearchServlet extends HttpServlet {
         out.print(jsonResult);
         out.flush();
     }
-}
 
+    // Method to check if a string is numeric
+    private boolean isNumeric(String str) {
+        if (str == null || str.trim().isEmpty()) {
+            return false;
+        }
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
