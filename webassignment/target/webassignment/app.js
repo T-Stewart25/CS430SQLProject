@@ -131,28 +131,26 @@ function deleteUser() {
             return response.json();
         })
         .then(data => {
-            if (data.success) { // Assuming your API sends back a success status
-                displayDeletionResult(false, 'deleteUserResult');
-            } else {
-                displayDeletionResult(true, 'deleteUserResult');
+            if (!data.searchSuccess) { // No user found
+                displayDeletionResult("No user found", 'deleteUserResult');
+            } else if (data.deletionSuccess) { // Deletion successful
+                displayDeletionResult("Deletion successful!", 'deleteUserResult');
+            } else { // Deletion failed
+                displayDeletionResult("Deletion failed. User deletion process failed", 'deleteUserResult');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            displayDeletionResult(false, 'deleteUserResult');
+            displayDeletionResult("Deletion failed. User never existed or deletion process failed", 'deleteUserResult');
         });
 }
 
-function displayDeletionResult(success, resultDivId) {
+function displayDeletionResult(message, resultDivId) {
     var resultDiv = document.getElementById(resultDivId);
     resultDiv.innerHTML = ""; // Clear any previous messages
-
-    if (success) {
-        resultDiv.textContent = "Deletion sucessful!"; 
-    } else {
-        resultDiv.textContent = "Deletion failed. User never existed or deletion process failed";
-    }
+    resultDiv.textContent = message;
 }
+
 
 
 function displayResult(users, resultDivId) {
