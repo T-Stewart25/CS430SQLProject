@@ -29,7 +29,7 @@ public class UsageAddServlet extends HttpServlet {
     private static final String JDBC_PASSWORD = "835460928";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userId = request.getParameter("userId");
+        String userId = request.getParameter("userID");
         String deviceId = request.getParameter("deviceId");
         String usageDate = request.getParameter("usageDate");
         String usageDuration = request.getParameter("usageDuration");
@@ -47,14 +47,15 @@ public class UsageAddServlet extends HttpServlet {
         try {
             // Establish database connection
             connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
-
-            // Prepare SQL statement
-            String sql = "INSERT INTO Uses (UserID, DeviceId, UsageDate, UsageDuration) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO Uses (UserID, DeviceID, UsageDate, UsageDuration) VALUES (?, ?, ?, ?)";
             statement = connection.prepareStatement(sql);
-            statement.setString(1, userId);
-            statement.setString(2, deviceId);
-            statement.setString(3, usageDate);
-            statement.setString(4, usageDuration);
+            int userIdInt = Integer.parseInt(userId); // Convert userId string to int
+            int deviceIdInt = Integer.parseInt(deviceId); // Convert deviceId string to int
+            statement.setInt(1, userIdInt);    // Set the converted userId integer value
+            statement.setInt(2, deviceIdInt);  // Set the converted deviceId integer value
+            statement.setDate(3, java.sql.Date.valueOf(usageDate));  // Assuming usageDate is a string in 'yyyy-MM-dd' format
+            int duration = Integer.parseInt(usageDuration); // Convert usageDuration string to int
+            statement.setInt(4, duration);
 
             // Execute update (not query)
             int rowsAffected = statement.executeUpdate(); // Use executeUpdate for INSERT statements

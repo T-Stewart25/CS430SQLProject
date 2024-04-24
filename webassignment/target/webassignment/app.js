@@ -194,7 +194,7 @@ function addUses(){
             return response.json();
         })
         .then(data => {
-            displayResult(data, 'addUserResult');
+            displayResultUsage(data, 'updateUsageResult');
         })
         .catch(error => console.error('Error:', error));
 }
@@ -234,7 +234,7 @@ function displayResultUsage(uses, resultDivId) {
         var usesList = document.createElement('ul');
         uses.forEach(uses => {
             var listItem = document.createElement('li');
-            listItem.textContent = uses.userId + ' - ' + uses.deviceId + ' - ' + uses.usageDate + ' - ' + uses.usageDuration; 
+            listItem.textContent = 'ADDED USAGE: userID: ' + uses.userId + ' - deviceID: ' +  uses.deviceId + ' - usageDate: ' +  uses.usageDate + ' - usageDuration: ' +  uses.usageDuration; 
             usesList.appendChild(listItem);
         });
         resultDiv.appendChild(usesList);
