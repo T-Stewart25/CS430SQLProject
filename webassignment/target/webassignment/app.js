@@ -132,28 +132,80 @@ function deleteUser() {
             return response.json();
         })
         .then(data => {
-            if (data.success) { // Assuming your API sends back a success status
-                displayDeletionResult(true, 'deleteUserResult');
-            } else {
-                displayDeletionResult(false, 'deleteUserResult');
+            if (!data.searchSuccess) { // No user found
+                displayDeletionResult("No user found", 'deleteUserResult');
+            } else if (data.deletionSuccess) { // Deletion successful
+                displayDeletionResult("Deletion successful!", 'deleteUserResult');
+            } else { // Deletion failed
+                displayDeletionResult("Deletion failed. User deletion process failed", 'deleteUserResult');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            displayDeletionResult(false, 'deleteUserResult');
+            displayDeletionResult("Deletion failed. User never existed or deletion process failed", 'deleteUserResult');
         });
 }
 
-function displayDeletionResult(success, resultDivId) {
+function addUses(){
+    var userIDElement = document.getElementById('UserId');
+    var deviceIDElement = document.getElementById('DeviceId');
+    var usageDateElement = document.getElementById('UsageDate');
+    var usageDurationElement = document.getElementById('UsageDuration');
+
+
+    var userID = userIDElement.value.trim();
+    var deviceId = deviceIDElement.value.trim();
+    var usageDate = usageDateElement.value.trim();
+    var usageDuration = usageDurationElement.value.trim();
+
+    if (userID === "") {
+        alert("Please enter a user ID to add.");
+        return;
+    }
+    else if (deviceId === "") {
+        alert("Please enter a deviceId to add.");
+        return;
+    }
+    else if (usageDate === "") {
+        alert("Please enter a usage date to add.");
+        return;
+    }
+    else if (usageDuration === "") {
+        alert("Please enter a usage duration to add.");
+        return;
+    }
+    // Clear the inputs after validation
+    userIDElement.value = '';
+    deviceIDElement.value = '';
+    usageDurationElement.value = '';
+    usageDurationElement.value = '';
+
+
+    // Construct the URL with all variables
+    var url = '/webassignment/addUsage?userID=' + encodeURIComponent(userID) +
+              '&deviceId=' + encodeURIComponent(deviceId) +
+              '&usageDate=' + encodeURIComponent(usageDate) +
+              '&usageDuration=' + encodeURIComponent(usageDuration);
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayResult(data, 'addUserResult');
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function displayDeletionResult(message, resultDivId) {
     var resultDiv = document.getElementById(resultDivId);
     resultDiv.innerHTML = ""; // Clear any previous messages
-
-    if (success) {
-        resultDiv.textContent = "Done"; // Display "Done" on successful deletion
-    } else {
-        resultDiv.textContent = "Deletion failed"; // Display an error message if deletion failed
-    }
+    resultDiv.textContent = message;
 }
+
 
 
 function displayResult(users, resultDivId) {
@@ -166,10 +218,27 @@ function displayResult(users, resultDivId) {
         var userList = document.createElement('ul');
         users.forEach(user => {
             var listItem = document.createElement('li');
-            listItem.textContent = user.userName + ' - ' + user.userType + ' - ' + user.userID; // Ensure these property names match your data structure
+            listItem.textContent = user.userName + ' - ' + user.userType + ' - ' + user.userId; 
             userList.appendChild(listItem);
         });
         resultDiv.appendChild(userList);
+    }
+}
+
+function displayResultUsage(uses, resultDivId) {
+    var resultDiv = document.getElementById(resultDivId);
+    resultDiv.innerHTML = "";
+
+    if (uses.length === 0) {
+        resultDiv.textContent = "No usage found.";
+    } else {
+        var usesList = document.createElement('ul');
+        uses.forEach(uses => {
+            var listItem = document.createElement('li');
+            listItem.textContent = uses.userId + ' - ' + uses.deviceId + ' - ' + uses.usageDate + ' - ' + uses.usageDuration; 
+            usesList.appendChild(listItem);
+        });
+        resultDiv.appendChild(usesList);
     }
 }
 
