@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.model.Total;
-import com.example.model.Device;
-import com.example.model.User;
-import com.example.model.Uses;
+// import com.example.model.Device;
+// import com.example.model.User;
+// import com.example.model.Uses;
 import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
@@ -96,7 +96,7 @@ public class TotalSearchServlet extends HttpServlet {
     PrintWriter out = response.getWriter();
     out.print(jsonResult);
     out.flush();
-}
-    
     }
+    
 }
+
