@@ -13,27 +13,27 @@ public class Device {
     }
 
     // Getters and setters
-    public int getUserId() {
+    public int getDeviceId() {
         return deviceId;
     }
 
-    public void setUserId(int deviceId) {
+    public void setDeviceId(int deviceId) {
         this.deviceId = deviceId;
     }
 
-    public String getUserName() {
+    public String getDeviceName() {
         return deviceName;
     }
 
-    public void setUserName(String deviceName) {
+    public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
 
-    public String getUserType() {
+    public String getDeviceType() {
         return deviceType;
     }
 
-    public void setUserType(String deviceType) {
+    public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
     }
 }
