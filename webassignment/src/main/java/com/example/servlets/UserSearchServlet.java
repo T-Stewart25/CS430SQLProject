@@ -24,56 +24,51 @@ public class UserSearchServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // JDBC URL, username, and password
-	private static final String JDBC_URL = "jdbc:mysql://faure.cs.colostate.edu:3306/tste";
+    private static final String JDBC_URL = "jdbc:mysql://faure.cs.colostate.edu:3306/tste";
     private static final String JDBC_USERNAME = "tste";
     private static final String JDBC_PASSWORD = "835460928";
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String userName = request.getParameter("userName");
-    String userId = request.getParameter("userId");
-    List<User> searchResult = new ArrayList<>();
-    Connection connection = null;
-    PreparedStatement statement = null;
-    ResultSet resultSet = null;
+        String userName = request.getParameter("userName");
+        List<User> searchResult = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
 
-    try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-    } catch (ClassNotFoundException e){
-        e.printStackTrace();
-    }
-
-    try{
-
-        connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
-
-        String sql = null;
-        // Determine which parameter is provided and prepare SQL statement accordingly
-        if (userId != null && !userId.isEmpty()) {
-            sql = "SELECT * FROM Users WHERE UserID = ?";
+            // Prepare SQL statement
+            String sql;
+            if (isNumeric(userName)) {
+                sql = "SELECT * FROM Users WHERE UserID = ?";
+            } else {
+                sql = "SELECT * FROM Users WHERE UserName LIKE ?";
+            }
             statement = connection.prepareStatement(sql);
-            statement.setInt(1, Integer.parseInt(userId));
-        } else if (userName != null && !userName.isEmpty()) {
-            sql = "SELECT * FROM Users WHERE UserName LIKE ?";
-            statement = connection.prepareStatement(sql);
-            statement.setString(1, "%" + userName + "%");
-        } else {
-            // If neither is provided, handle it (possibly throw an exception or return an error)
-            throw new IllegalArgumentException("No valid search parameter provided.");
-        }
+
+            // Set parameter based on whether userName is numeric or not
+            if (isNumeric(userName)) {
+                statement.setInt(1, Integer.parseInt(userName));
+            } else {
+                statement.setString(1, "%" + userName + "%");
+            }
 
         // Execute the query
         resultSet = statement.executeQuery();
 
-        // Process the results
-        while (resultSet.next()) {
-            int retrievedUserId = resultSet.getInt("UserID");
-            String name = resultSet.getString("UserName");
-            String userType = resultSet.getString("UserType");
-            System.out.println("Student ID: "+ retrievedUserId + "\nStudent Name: " + name + "\nUser Type: " + userType);
-            User user = new User(retrievedUserId, name, userType);
-            searchResult.add(user);
-        }
-        } catch (SQLException e) {
+            // Process result set
+            while (resultSet.next()) {
+                int userId = resultSet.getInt("UserID");
+                String name = resultSet.getString("UserName");
+                String userType = resultSet.getString("UserType");
+                System.out.println(" Student ID: "+ userId+"\n Student Name: " + name + "\n Dept Name: "
+                        + userType);
+                // Create User object and add to search result
+                User user = new User(userId, name, userType);
+                searchResult.add(user);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NumberFormatException e) {
             e.printStackTrace(); // Handle the case where userId is not a valid integer
@@ -96,5 +91,17 @@ public class UserSearchServlet extends HttpServlet {
         out.print(jsonResult);
         out.flush();
     }
-}
 
+    // Method to check if a string is numeric
+    private boolean isNumeric(String str) {
+        if (str == null || str.trim().isEmpty()) {
+            return false;
+        }
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
