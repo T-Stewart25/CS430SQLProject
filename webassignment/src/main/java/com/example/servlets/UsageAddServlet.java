@@ -1,5 +1,3 @@
-package com.example.servlets;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -30,7 +28,7 @@ public class UsageAddServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userId = request.getParameter("userID");
-        String deviceId = request.getParameter("deviceId");
+        String deviceName = request.getParameter("deviceName");
         String usageDate = request.getParameter("usageDate");
         String usageDuration = request.getParameter("usageDuration");
         Connection connection = null;
@@ -47,12 +45,23 @@ public class UsageAddServlet extends HttpServlet {
         try {
             // Establish database connection
             connection = DriverManager.getConnection(JDBC_URL, JDBC_USERNAME, JDBC_PASSWORD);
+            
+            // Query to retrieve DeviceID based on DeviceName
+            String deviceQuery = "SELECT DeviceID FROM Devices WHERE DeviceName = ?";
+            statement = connection.prepareStatement(deviceQuery);
+            statement.setString(1, deviceName);
+            resultSet = statement.executeQuery();
+            int deviceId = 0; // Default value
+            if(resultSet.next()) {
+                deviceId = resultSet.getInt("DeviceID");
+            }
+
+            // Insert usage record into Uses table
             String sql = "INSERT INTO Uses (UserID, DeviceID, UsageDate, UsageDuration) VALUES (?, ?, ?, ?)";
             statement = connection.prepareStatement(sql);
             int userIdInt = Integer.parseInt(userId); // Convert userId string to int
-            int deviceIdInt = Integer.parseInt(deviceId); // Convert deviceId string to int
             statement.setInt(1, userIdInt);    // Set the converted userId integer value
-            statement.setInt(2, deviceIdInt);  // Set the converted deviceId integer value
+            statement.setInt(2, deviceId);     // Set the retrieved deviceId value
             statement.setDate(3, java.sql.Date.valueOf(usageDate));  // Assuming usageDate is a string in 'yyyy-MM-dd' format
             int duration = Integer.parseInt(usageDuration); // Convert usageDuration string to int
             statement.setInt(4, duration);
@@ -62,7 +71,7 @@ public class UsageAddServlet extends HttpServlet {
             
             if (rowsAffected > 0) {
                 // If insertion successful, create User object and add to search result
-                Uses uses = new Uses(Integer.parseInt(userId), Integer.parseInt(deviceId), usageDate, usageDuration);
+                Uses uses = new Uses(Integer.parseInt(userId), deviceId, usageDate, usageDuration);
                 searchResult.add(uses);
             }
         } catch (SQLException e) {

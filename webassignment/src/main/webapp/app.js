@@ -182,7 +182,7 @@ function addUses(){
 
     // Construct the URL with all variables
     var url = '/webassignment/addUsage?userID=' + encodeURIComponent(userID) +
-              '&deviceId=' + encodeURIComponent(deviceId) +
+              '&deviceName=' + encodeURIComponent(deviceId) +
               '&usageDate=' + encodeURIComponent(usageDate) +
               '&usageDuration=' + encodeURIComponent(usageDuration);
 
@@ -229,7 +229,7 @@ function displayResultUsage(uses, resultDivId) {
     resultDiv.innerHTML = "";
 
     if (uses.length === 0) {
-        resultDiv.textContent = "Usage already exists or Device ID and or User ID is not in Database";
+        resultDiv.textContent = "Usage already exists or Device Name and or User ID is not in Database";
     } else {
         var usesList = document.createElement('ul');
         uses.forEach(uses => {
