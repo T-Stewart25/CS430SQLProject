@@ -176,7 +176,7 @@ function addUses(){
     // Clear the inputs after validation
     userIDElement.value = '';
     deviceIDElement.value = '';
-    usageDurationElement.value = '';
+    usageDateElement.value = '';
     usageDurationElement.value = '';
 
 
@@ -214,6 +214,8 @@ function searchGeneral(){
 
     // Clear the input field after validation but before fetch operation
     inputElement.value = '';
+    date1Element.value = '';
+    date2Element.value = '';
 
     fetch('/webassignment/generalSearch?userId=' + encodeURIComponent(searchInput)+
     '&date1=' + encodeURIComponent(date1) +
