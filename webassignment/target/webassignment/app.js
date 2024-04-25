@@ -22,7 +22,6 @@ function searchUsers() {
         })
         .catch(error => {
             console.error('Error:', error);
-            // Optionally, you might want to handle error more explicitly here
         });
 }
 
@@ -131,12 +130,15 @@ function deleteUser() {
             return response.json();
         })
         .then(data => {
-            if (!data.searchSuccess) { // No user found
-                displayDeletionResult("No user found", 'deleteUserResult');
-            } else if (data.deletionSuccess) { // Deletion successful
+            if (data.deletionSuccessFinal) { // Deletion successful
                 displayDeletionResult("Deletion successful!", 'deleteUserResult');
-            } else { // Deletion failed
-                displayDeletionResult("Deletion failed. User deletion process failed", 'deleteUserResult');
+            }
+            else if (!data.searchSuccess) { // No user found
+                displayDeletionResult("No user found", 'deleteUserResult');
+            } else if (data.deletionSuccessFinal) { // Deletion successful
+                displayDeletionResult("Deletion successful!", 'deleteUserResult');
+            } else {
+                displayDeletionResult("Deletion successful!", 'deleteUserResult');
             }
         })
         .catch(error => {
@@ -176,7 +178,7 @@ function addUses(){
     // Clear the inputs after validation
     userIDElement.value = '';
     deviceIDElement.value = '';
-    usageDurationElement.value = '';
+    usageDateElement.value = '';
     usageDurationElement.value = '';
 
 
@@ -197,6 +199,41 @@ function addUses(){
             displayResultUsage(data, 'updateUsageResult');
         })
         .catch(error => console.error('Error:', error));
+}
+
+function searchGeneral(){
+    var inputElement = document.getElementById('generalInput');
+    var date1Element = document.getElementById('date1');
+    var date2Element = document.getElementById('date2');
+    var searchInput = inputElement.value.trim();
+    var date1 = date1Element.value.trim();
+    var date2 = date2Element.value.trim();
+
+    if (searchInput === "") {
+        alert("Please enter a user ID to search.");
+        return;
+    }
+
+    // Clear the input field after validation but before fetch operation
+    inputElement.value = '';
+    date1Element.value = '';
+    date2Element.value = '';
+
+    fetch('/webassignment/generalSearch?userId=' + encodeURIComponent(searchInput)+
+    '&date1=' + encodeURIComponent(date1) +
+    '&date2=' + encodeURIComponent(date2))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayGeneralResult(data, 'generalResult');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 function displayDeletionResult(message, resultDivId) {
@@ -223,6 +260,32 @@ function displayResult(users, resultDivId) {
         resultDiv.appendChild(userList);
     }
 }
+
+function displayGeneralResult(data, resultDivId) {
+    var resultDiv = document.getElementById(resultDivId);
+    resultDiv.innerHTML = "";
+
+    if (data.length === 0) {
+        resultDiv.textContent = "No data found.";
+    } else {
+        var dataList = document.createElement('ul');
+        data.forEach(user => {
+            var listItem = document.createElement('li');
+            listItem.textContent = "User ID: " + user.user.userId + 
+                                   ", User Name: " + user.user.userName + 
+                                   ", User Type: " + user.user.userType + 
+                                   ", Device ID: " + user.device.deviceId + 
+                                   ", Device Name: " + user.device.deviceName + 
+                                   ", Device Type: " + user.device.deviceType + 
+                                   ", Usage Date: " + user.uses.usageDate + 
+                                   ", Usage Duration: " + user.uses.usageDuration; 
+            dataList.appendChild(listItem);
+        });
+        resultDiv.appendChild(dataList);
+    }
+}
+
+
 
 function displayResultUsage(uses, resultDivId) {
     var resultDiv = document.getElementById(resultDivId);

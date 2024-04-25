@@ -60,6 +60,14 @@
 </head>
 <body>
     <div>
+        <h2>General Search</h2>
+        <input type="text" id="generalInput" placeholder="Enter user ID">
+        <input type="text" id="date1" placeholder="Start Date (year-month-day, 0000-00-00)">
+        <input type="text" id="date2" placeholder="End Date (year-month-day, 0000-00-00)">
+        <button onclick="searchGeneral()">Search</button>
+        <div id="generalResult"></div>
+    </div>
+    <div>
         <h2>Search for Users</h2>
         <input type="text" id="searchInput" placeholder="Enter user name or user ID">
         <button onclick="searchUsers()">Search</button>
@@ -83,7 +91,7 @@
     </div>
     <div>
         <h2>Add a Usage for a User</h2>
-        <input type="text" id="UserId" placeholder="UserId">
+        <input type="text" id="UserId" placeholder="User Name">
         <input type="text" id="DeviceId" placeholder="Exact Name of Device Used (EX:Oppo Reno5 Pro)">
         <input type="text" id="UsageDate" placeholder="Date the Device was Utilized (year-month-day, 0000-00-00)">
         <input type="text" id="UsageDuration" placeholder="Duration the Device was Utilized (in minutes, no decimal)">
