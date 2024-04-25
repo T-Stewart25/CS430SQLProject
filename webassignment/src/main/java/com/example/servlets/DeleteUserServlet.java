@@ -27,7 +27,6 @@ public class DeleteUserServlet extends HttpServlet {
         String userID = request.getParameter("userID");
         boolean searchSuccess = false;
         boolean deletionSuccess = false;
-        boolean deletionSuccessFinal = false;
 
         Connection connection = null;
         PreparedStatement statement = null;
@@ -47,26 +46,6 @@ public class DeleteUserServlet extends HttpServlet {
             searchSuccess = resultSet.next(); // Check if user exists
 
             if (searchSuccess) {
-                // Prepare SQL statement for search
-                sqlSearch = "SELECT * FROM Uses WHERE UserID = ?";
-                statement = connection.prepareStatement(sqlSearch);
-                statement.setString(1, userID);
-
-                // Execute search query
-                resultSet = statement.executeQuery();
-
-                boolean searchSuccess2 = resultSet.next(); // Check if user exists
-                if (searchSuccess2) {
-                    // Prepare SQL statement for deletion
-                    String sqlDelete = "DELETE FROM Uses WHERE UserID = ?";
-                    statement = connection.prepareStatement(sqlDelete);
-                    statement.setString(1, userID);
-
-                    // Execute deletion query
-                    int rowsAffected = statement.executeUpdate();
-                }
-
-
                 // Prepare SQL statement for deletion
                 String sqlDelete = "DELETE FROM Users WHERE UserID = ?";
                 statement = connection.prepareStatement(sqlDelete);
@@ -74,7 +53,7 @@ public class DeleteUserServlet extends HttpServlet {
 
                 // Execute deletion query
                 int rowsAffected = statement.executeUpdate();
-                deletionSuccessFinal = rowsAffected > 0; // Check if deletion was successful
+                deletionSuccess = rowsAffected > 0; // Check if deletion was successful
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,7 +73,7 @@ public class DeleteUserServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
-        out.print("{\"searchSuccess\": " + searchSuccess + ", \"deletionSuccessFinal\": " + deletionSuccessFinal + "}");
+        out.print("{\"searchSuccess\": " + searchSuccess + ", \"deletionSuccess\": " + deletionSuccess + "}");
         out.flush();
     }
 }
