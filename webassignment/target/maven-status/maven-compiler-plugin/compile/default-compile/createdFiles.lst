@@ -1,6 +1,10 @@
 com/example/servlets/ChangeUserServlet.class
 com/example/model/User.class
 com/example/servlets/UserAddServlet.class
-UsageAddServlet.class
+com/example/servlets/DeleteUserServlet.class
+com/example/model/Total.class
+com/example/servlets/UsageAddServlet.class
+com/example/servlets/TotalSearchServlet.class
+com/example/model/Device.class
 com/example/model/Uses.class
 com/example/servlets/UserSearchServlet.class

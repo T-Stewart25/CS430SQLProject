@@ -28,7 +28,7 @@ function searchUsers() {
 }
 
 function searchUserDevices() {
-    var inputElement = document.getElementById('searchInput');
+    var inputElement = document.getElementById('UserId');
     var startDateElement = document.getElementById('startDate');
     var endDateElement = document.getElementById('endDate');
 
