@@ -22,7 +22,6 @@ function searchUsers() {
         })
         .catch(error => {
             console.error('Error:', error);
-            // Optionally, you might want to handle error more explicitly here
         });
 }
 
@@ -131,12 +130,15 @@ function deleteUser() {
             return response.json();
         })
         .then(data => {
-            if (!data.searchSuccess) { // No user found
-                displayDeletionResult("No user found", 'deleteUserResult');
-            } else if (data.deletionSuccess) { // Deletion successful
+            if (data.deletionSuccessFinal) { // Deletion successful
                 displayDeletionResult("Deletion successful!", 'deleteUserResult');
-            } else { // Deletion failed
-                displayDeletionResult("Deletion failed. User deletion process failed", 'deleteUserResult');
+            }
+            else if (!data.searchSuccess) { // No user found
+                displayDeletionResult("No user found", 'deleteUserResult');
+            } else if (data.deletionSuccessFinal) { // Deletion successful
+                displayDeletionResult("Deletion successful!", 'deleteUserResult');
+            } else {
+                displayDeletionResult("Deletion successful!", 'deleteUserResult');
             }
         })
         .catch(error => {
@@ -231,7 +233,6 @@ function searchGeneral(){
         })
         .catch(error => {
             console.error('Error:', error);
-            // Optionally, you might want to handle error more explicitly here
         });
 }
 
