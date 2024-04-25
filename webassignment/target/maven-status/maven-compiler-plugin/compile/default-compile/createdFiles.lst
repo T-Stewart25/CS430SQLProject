@@ -2,8 +2,8 @@ com/example/servlets/ChangeUserServlet.class
 GeneralUserServlet.class
 com/example/model/User.class
 com/example/model/AllData.class
-com/example/servlets/DeleteUserServlet.class
 com/example/servlets/UserAddServlet.class
+com/example/servlets/DeleteUserServlet.class
 com/example/model/Device.class
 UsageAddServlet.class
 com/example/model/Uses.class
